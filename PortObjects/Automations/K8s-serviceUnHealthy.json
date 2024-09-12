@@ -1,0 +1,33 @@
+{
+  "identifier": "K8s-serviceUnHealthy",
+  "title": "Service Health Changed",
+  "trigger": {
+    "type": "automation",
+    "event": {
+      "type": "ANY_ENTITY_CHANGE",
+      "blueprintIdentifier": "workload"
+    },
+    "condition": {
+      "type": "JQ",
+      "expressions": [
+        ".diff.before.properties.isHealthy != .diff.after.properties.isHealthy"
+      ],
+      "combinator": "and"
+    }
+  },
+  "invocationMethod": {
+    "type": "KAFKA",
+    "payload": {
+      "msg_type": "k8sgpt",
+      "name": "{{.event.diff.after.title}}",
+      "namespace": "{{.event.diff.after.properties.namespace}}",
+      "kind": "{{.event.diff.after.properties.kind}}",
+      "entity_identifier": "{{.event.context.entityIdentifier}}",
+      "entity_health": "{{.event.diff.after.properties.isHealthy}}",
+      "port_context": {
+        "run_id": "{{.run.id}}"
+      }
+    }
+  },
+  "publish": true
+}
