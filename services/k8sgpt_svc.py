@@ -2,7 +2,7 @@ import json
 import logging
 import requests
 
-from SVC.pretify_svc import prettify_markdown
+from services.pretify_svc import prettify_markdown
 from constants import K8SGPT_URL, BACKEND_LLM
 
 

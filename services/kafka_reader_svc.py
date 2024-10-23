@@ -5,10 +5,11 @@ from typing import Dict, Any
 
 from confluent_kafka import Consumer, KafkaError
 
-from SVC.k8sgpt_svc import get_k8sgpt_insights
-from SVC.update_port_svc import update_port
+from services.k8sgpt_svc import get_k8sgpt_insights
+from services.update_port_svc import update_port
 from constants import BOOTSTRAP_SERVERS, AUTO_OFFSET_RESET, SECURITY_PROTOCOL, SASL_MECHANISMS, MSG_TYPE, K8SGPT_TYPE
 
+logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s')
 
 def create_consumer_config() -> Dict[str, Any]:
     SASL_USERNAME = os.getenv("SASL_USERNAME")
@@ -70,7 +71,8 @@ def process_message(consumer: Consumer, msg):
                 message_data["namespace"]
             )
             update_port(entity_identifier, k8sgpt_insights)
+            # logging.DEBUG(f"K8sGPT insights: {k8sgpt_insights}")
         else:
             update_port(entity_identifier)
-        # Manually commit offset after processing the message
-        consumer.commit(message=msg)
+            # Manually commit offset after processing the message
+            consumer.commit(message=msg)
